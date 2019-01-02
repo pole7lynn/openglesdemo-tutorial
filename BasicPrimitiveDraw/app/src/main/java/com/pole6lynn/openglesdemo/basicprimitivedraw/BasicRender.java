@@ -1,6 +1,8 @@
 package com.pole6lynn.openglesdemo.basicprimitivedraw;
 
 import android.content.Context;
+import android.opengl.EGL14;
+import android.opengl.EGLDisplay;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
@@ -13,13 +15,26 @@ import javax.microedition.khronos.opengles.GL10;
 public class BasicRender implements GLSurfaceView.Renderer {
     private static final String TAG = "BasicRender";
 
+    private EGLDisplay eglDisplay;
+    private int[] major;
+    private int[] minor;
+
     private int mViewWidth;
     private int mViewHeight;
 
     private Triangle mTriangle;
 
+    private int[] maxVertexAttributes;
+
     public BasicRender(Context context) {
+        /*major = new int[1];
+        minor = new int[1];
+        eglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
+        EGL14.eglInitialize(eglDisplay, major, 0, minor, 0);*/
+
         mTriangle = new Triangle();
+
+        //GLES30.glGetIntegerv(GLES30.GL_MAX_VERTEX_ATTRIBS, maxVertexAttributes, 0);
 
     }
 
@@ -41,6 +56,11 @@ public class BasicRender implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glViewport(0, 0, mViewWidth, mViewHeight/2);
         mTriangle.draw();
+
+        GLES30.glViewport(0, mViewHeight/2, mViewWidth, mViewHeight/2);
+        mTriangle.draw();
+
     }
 }

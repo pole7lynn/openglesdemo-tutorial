@@ -10,25 +10,47 @@ import java.nio.FloatBuffer;
 public class Triangle {
     private static final String TAG = "Triangle";
 
+    private final int VERTEX_POS_SIZE = 3;
+    private final int VERTEX_NORMAL_SIZE = 3;
+    private final int VERTEX_TEXCOORD0 = 2;
+    private final int VERTEX_TEXCOORD1 = 2;
+
+    private final int VERTEX_POS_INDEX = 0;
+    private final int VERTEX_NORMAL_INDEX = 1;
+    private final int VERTEX_TEXCOORD0_INDEX = 2;
+    private final int VERTEX_TEXCOORD1_INDEX = 3;
+
+    private final int VERTEX_POS_OFFEST = 0;
+    private final int VETREX_NORMAL_OFFEST = 3;
+    private final int VERTEX_TEXCOORD0_OFFEST = 6;
+    private final int VERTEX_TEXCOORD1_OFFEST = 8;
+
     private float[] mVerticesData = {
             0.0f, 1.0f, 0.0f,
             -1.0f, -1.0f, 0.0f,
             1.0f, -1.0f, 0.0f
     };
+
+    private float[] mColorData = {0.0f, 1.0f, 0.0f, 0.0f};
+
     private FloatBuffer mVerticesBuffer;
 
     private String mVertexShaderSrc =
             "#version 300 es                                    \n"
-            +"layout (location = 0) in vec4 vPosition;          \n"
+            +"layout (location = 0) in vec4 a_Position;          \n"
+            +"layout (location = 1) in vec4 a_Color;             \n"
+            +"out vec4 vColor;                                 \n"
             +"void main() {                                     \n"
-            +"    gl_Position = vPosition;                      \n"
+            +"    gl_Position = a_Position;                      \n"
+            +"    vColor = a_Color;                              \n"
             +"}";
     private String mFragmentShaderSrc =
             "#version 300 es                                    \n"
-            //+"precision mediump float;                          \n"
+            +"precision mediump float;                          \n"
+            +"in vec4 vColor;                                    \n"
             +"out vec4 fragColor;                               \n"
             +"void main() {                                     \n"
-            +"    fragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);     \n"
+            +"    fragColor = vColor;                           \n"
             +"}";
 
     private int mVertexShader;
@@ -54,6 +76,10 @@ public class Triangle {
         }
         GLES30.glAttachShader(mProgramObject, mVertexShader);
         GLES30.glAttachShader(mProgramObject, mFragmentShader);
+
+        GLES30.glGetAttribLocation(mProgramObject, "a_Position");
+        GLES30.glGetUniformLocation(mProgramObject, "");
+
         GLES30.glLinkProgram(mProgramObject);
         GLES30.glGetProgramiv(mProgramObject, GLES30.GL_LINK_STATUS, linked, 0);
         if (linked[0] == 0) {
@@ -77,6 +103,9 @@ public class Triangle {
         GLES30.glGetShaderiv(shader, GLES30.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
             Log.e(TAG, "Compile shader error.");
+            //compileInfoLength = compiled[1];
+            String compileInfo = GLES30.glGetShaderInfoLog(shader);
+            Log.e(TAG,"compileInfo = " + compileInfo);
             GLES30.glDeleteShader(shader);
             return 0;
         }
@@ -85,8 +114,12 @@ public class Triangle {
 
     public void draw() {
         GLES30.glUseProgram(mProgramObject);
+        //Specify the vertices position data by array.
         GLES30.glVertexAttribPointer ( 0, 3, GLES30.GL_FLOAT, false, 0, mVerticesBuffer );
         GLES30.glEnableVertexAttribArray (0);
+        //Specify the vertices color data by constant vertex values.
+        GLES30.glVertexAttrib4fv(1, mColorData, 0);
+
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3);
     }
 }
