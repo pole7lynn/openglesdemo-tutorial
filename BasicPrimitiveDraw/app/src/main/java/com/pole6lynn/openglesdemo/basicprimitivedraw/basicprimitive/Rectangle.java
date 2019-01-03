@@ -60,6 +60,9 @@ public class Rectangle {
     private FloatBuffer mVertices;
     private ShortBuffer mIndices;
 
+    private FloatBuffer mVertexMapBuffer;
+    private ShortBuffer mIndicesMapBuffer;
+
     private int[] mVBOIds = new int[2];
 
     public Rectangle() {
@@ -188,5 +191,59 @@ public class Rectangle {
 
         GLES30.glDisableVertexAttribArray(VERTEX_POS_INDEX);
         GLES30.glDisableVertexAttribArray(VERTEX_COLOR_INDEX);
+    }
+
+    public void drawWithVBOMapBuffer() {
+        if (mVBOIds[0] == 0 || mVBOIds[1] == 0) {
+            GLES30.glGenBuffers(2, mVBOIds, 0);
+
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBOIds[0]);
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, mVertexData.length *4,
+                    null, GLES30.GL_STATIC_DRAW);
+            mVertexMapBuffer = ((ByteBuffer)GLES30.glMapBufferRange(GLES30.GL_ARRAY_BUFFER,
+                    0, mVertexData.length * 4, GLES30.GL_MAP_WRITE_BIT |
+                    GLES30.GL_MAP_INVALIDATE_BUFFER_BIT)).order(ByteOrder.nativeOrder())
+                    .asFloatBuffer();
+            mVertexMapBuffer.put(mVertexData).position(0);
+            GLES30.glUnmapBuffer(GLES30.GL_ARRAY_BUFFER);
+
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[1]);
+            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, mIndicesData.length *2,
+                    null, GLES30.GL_STATIC_DRAW);
+            mIndicesMapBuffer = ((ByteBuffer)GLES30.glMapBufferRange(GLES30.GL_ELEMENT_ARRAY_BUFFER,
+                    0, mIndicesData.length * 2, GLES30.GL_MAP_WRITE_BIT |
+                            GLES30.GL_MAP_INVALIDATE_BUFFER_BIT)).order(ByteOrder.nativeOrder())
+                    .asShortBuffer();
+            mIndicesMapBuffer.put(mIndicesData).position(0);
+            GLES30.glUnmapBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER);
+        }
+
+        int numIndices = 4;
+        int vtxStride = 4 * (VERTEX_POS_SIZE + VERTEX_COLOR_SIZE);
+        int offset = 0;
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBOIds[0]);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[1]);
+
+        GLES30.glEnableVertexAttribArray (VERTEX_POS_INDEX );
+        GLES30.glEnableVertexAttribArray (VERTEX_COLOR_INDEX );
+
+        GLES30.glVertexAttribPointer ( VERTEX_POS_INDEX, VERTEX_POS_SIZE,
+                GLES30.GL_FLOAT, false, vtxStride, offset );
+
+        offset += ( VERTEX_POS_SIZE * 4 );
+
+        GLES30.glVertexAttribPointer ( VERTEX_COLOR_INDEX, VERTEX_COLOR_SIZE,
+                GLES30.GL_FLOAT, false, vtxStride, offset );
+
+        GLES30.glDrawElements ( GLES30.GL_TRIANGLE_STRIP, numIndices,
+                GLES30.GL_UNSIGNED_SHORT, 0 );
+
+        GLES30.glDisableVertexAttribArray ( VERTEX_POS_INDEX );
+        GLES30.glDisableVertexAttribArray ( VERTEX_COLOR_INDEX );
+
+        GLES30.glBindBuffer ( GLES30.GL_ARRAY_BUFFER, 0 );
+        GLES30.glBindBuffer ( GLES30.GL_ELEMENT_ARRAY_BUFFER, 0 );
+
     }
 }

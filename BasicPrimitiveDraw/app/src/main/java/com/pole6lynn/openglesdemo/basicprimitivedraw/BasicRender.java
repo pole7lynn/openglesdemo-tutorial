@@ -5,6 +5,7 @@ import android.opengl.EGL14;
 import android.opengl.EGLDisplay;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.pole6lynn.openglesdemo.basicprimitivedraw.basicprimitive.Rectangle;
@@ -19,6 +20,8 @@ public class BasicRender implements GLSurfaceView.Renderer {
     private EGLDisplay eglDisplay;
     private int[] major;
     private int[] minor;
+
+    private float[] mTranslateM = new float[16];
 
     private int mViewWidth;
     private int mViewHeight;
@@ -62,13 +65,15 @@ public class BasicRender implements GLSurfaceView.Renderer {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
 
         GLES30.glViewport(0, 0, mViewWidth, mViewHeight/3);
-        mRectangle.drawPrimitiveWithoutVBOs();
+        mRectangle.drawPrimitiveWithVBOs();
+        //mRectangle.drawPrimitiveWithoutVBOs();
 
         GLES30.glViewport(0, mViewHeight/3, mViewWidth,  mViewHeight/3);
-        mTriangle.draw();
+        //mTriangle.draw();
+        mTriangle.drawWithVAO();
 
         GLES30.glViewport(0, 2 * mViewHeight/3, mViewWidth, mViewHeight/3);
-        mRectangle.drawPrimitiveWithVBOs();
+        mRectangle.drawWithVBOMapBuffer();
 
     }
 }
