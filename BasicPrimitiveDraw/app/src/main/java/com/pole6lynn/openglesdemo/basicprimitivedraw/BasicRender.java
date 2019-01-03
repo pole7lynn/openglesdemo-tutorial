@@ -7,6 +7,7 @@ import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import com.pole6lynn.openglesdemo.basicprimitivedraw.basicprimitive.Rectangle;
 import com.pole6lynn.openglesdemo.basicprimitivedraw.basicprimitive.Triangle;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -23,6 +24,7 @@ public class BasicRender implements GLSurfaceView.Renderer {
     private int mViewHeight;
 
     private Triangle mTriangle;
+    private Rectangle mRectangle;
 
     private int[] maxVertexAttributes;
 
@@ -33,6 +35,7 @@ public class BasicRender implements GLSurfaceView.Renderer {
         EGL14.eglInitialize(eglDisplay, major, 0, minor, 0);*/
 
         mTriangle = new Triangle();
+        mRectangle = new Rectangle();
 
         //GLES30.glGetIntegerv(GLES30.GL_MAX_VERTEX_ATTRIBS, maxVertexAttributes, 0);
 
@@ -42,6 +45,7 @@ public class BasicRender implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         mTriangle.init();
+        mRectangle.init();
     }
 
     @Override
@@ -60,7 +64,7 @@ public class BasicRender implements GLSurfaceView.Renderer {
         mTriangle.draw();
 
         GLES30.glViewport(0, mViewHeight/2, mViewWidth, mViewHeight/2);
-        mTriangle.draw();
+        mRectangle.drawPrimitiveWithoutVBOs();
 
     }
 }
