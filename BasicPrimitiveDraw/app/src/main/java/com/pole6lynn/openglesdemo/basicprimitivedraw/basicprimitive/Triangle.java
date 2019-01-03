@@ -11,9 +11,9 @@ public class Triangle {
     private static final String TAG = "Triangle";
 
     private float[] mVerticesData = {
-            0.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f
+            0.0f, 0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f
     };
     private FloatBuffer mVerticesBuffer;
 

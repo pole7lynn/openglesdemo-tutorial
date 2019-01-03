@@ -16,16 +16,16 @@ public class Rectangle {
     private int mProgramObject;
 
     private String mVertexShaderSrc =
-            "#version 300 es" +
+            "#version 300 es                                           \n" +
                     "layout(location = 0) in vec4 a_Position;          \n" +
                     "layout(location = 1) in vec4 a_Color;             \n" +
-                    "out vec v_Color;                                  \n" +
+                    "out vec4 v_Color;                                  \n" +
                     "void main() {                                     \n" +
                     "    v_Color = a_Color;                            \n" +
                     "    gl_Position = a_Position;                     \n" +
                     "}";
     private String mFragmentShaderSrc =
-            "#version 300 es" +
+            "#version 300 es                                           \n" +
                     "precision mediump float;                          \n" +
                     "in vec4 v_Color;                                  \n" +
                     "out vec4 fragColor;                               \n" +
@@ -34,13 +34,13 @@ public class Rectangle {
                     "}";
 
     private float[] mVertexData = {
-            -1.0f, 1.0f, 0.0f,      //v0
+            -0.5f, 0.5f, 0.0f,      //v0
             1.0f, 0.0f, 0.0f, 1.0f, //c0
-            -1.0f, -1.0f, 0.0f,     //v1
+            -0.5f, -0.5f, 0.0f,     //v1
             0.0f, 1.0f, 0.0f, 1.0f, //c1
-            1.0f, 1.0f, 0.0f,       //v2
+            0.5f, 0.5f, 0.0f,       //v2
             0.0f, 0.0f, 1.0f, 1.0f, //c2
-            1.0f, -1.0f, 0.0f,      //v3
+            0.5f, -0.5f, 0.0f,      //v3
             1.0f, 1.0f, 1.0f, 1.0f, //c3
 
     };
@@ -93,8 +93,6 @@ public class Rectangle {
             GLES30.glDeleteProgram(mProgramObject);
             return;
         }
-
-        initVertexBufferObjects();
     }
 
     private int loaderShader(int shaderType, String shaderSrc) {
@@ -120,9 +118,13 @@ public class Rectangle {
     private void initVertexBufferObjects() {
         //Generate the VBO ids and load data.
         GLES30.glGenBuffers(2, mVBOIds, 0);
+
+        mVertices.position(0);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBOIds[0]);
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, mVertexData.length * 4,
                 mVertices, GLES30.GL_STATIC_DRAW );
+
+        mIndices.position(0);
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[1]);
         GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, mIndicesData.length * 2,
                 mIndices, GLES30.GL_STATIC_DRAW);
@@ -130,7 +132,37 @@ public class Rectangle {
     }
 
     public void drawPrimitiveWithVBOs() {
+        if (mVBOIds[0] == 0 || mVBOIds[1] == 0) {
+            Log.i(TAG, "Create buffer object.");
+            initVertexBufferObjects();
+            Log.i(TAG, "mVBOIds[0] = " + mVBOIds[0] + ", mVBOIds[1] = " + mVBOIds[1]);
+        }
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBOIds[0]);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, mVBOIds[1]);
 
+        GLES30.glUseProgram(mProgramObject);
+        int vtxStride = 4 * (VERTEX_POS_SIZE + VERTEX_COLOR_SIZE);
+        int offset = 0;
+        int numIndices = 4;
+
+        GLES30.glEnableVertexAttribArray(VERTEX_POS_INDEX);
+        mVertices.position(0);
+        GLES30.glVertexAttribPointer(VERTEX_POS_INDEX, VERTEX_POS_SIZE, GLES30.GL_FLOAT,
+                false, vtxStride, offset);
+
+        offset += VERTEX_POS_SIZE * 4;
+        GLES30.glEnableVertexAttribArray(VERTEX_COLOR_INDEX);
+        mVertices.position(VERTEX_POS_SIZE);
+        GLES30.glVertexAttribPointer(VERTEX_COLOR_INDEX, VERTEX_COLOR_SIZE, GLES30.GL_FLOAT,
+                false, vtxStride, offset);
+
+        GLES30.glDrawElements(GLES30.GL_TRIANGLE_STRIP, numIndices, GLES30.GL_UNSIGNED_SHORT,
+                0);
+
+        GLES30.glDisableVertexAttribArray(VERTEX_POS_INDEX);
+        GLES30.glDisableVertexAttribArray(VERTEX_COLOR_INDEX);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     public void drawPrimitiveWithoutVBOs() {
