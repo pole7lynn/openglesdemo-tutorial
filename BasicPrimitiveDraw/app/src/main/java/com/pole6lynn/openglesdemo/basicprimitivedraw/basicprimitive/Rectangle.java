@@ -1,5 +1,7 @@
 package com.pole6lynn.openglesdemo.basicprimitivedraw.basicprimitive;
 
+import android.opengl.GLES10;
+import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.util.Log;
 
@@ -244,6 +246,7 @@ public class Rectangle {
 
         GLES30.glBindBuffer ( GLES30.GL_ARRAY_BUFFER, 0 );
         GLES30.glBindBuffer ( GLES30.GL_ELEMENT_ARRAY_BUFFER, 0 );
+        GLES10.glPointSize(2.0f);
 
     }
 }

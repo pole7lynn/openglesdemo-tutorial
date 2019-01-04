@@ -13,7 +13,7 @@
 一般属性：颜色、纹理、法向量等</br>
 图元绘制命令：
 ```
-GLES30.glDrawArrays(int mode, int first, int n);
+GLES30.glDrawArrays(int mode, int first, int count);//count为顶点个数
 GLES30.glDrawElements();
 GLES30.glDrawRangeElements();
 GLES30.glDrawArraysInstanced();
@@ -23,4 +23,43 @@ GLES30.glDrawElementsInstanced();
 ![Triangles](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/Triangles.png)
 
 <font color="#0099ff" face="黑体" size=4>2. Lines</font></br>
+![Lines](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/Lines.png)
+
+*<font color="#0044ff" face="黑体" size=3>指定线宽</font></br>
+```
+GLES30.glLineWidth(2.0f);
+```
+
+*<font color="#0044ff" face="黑体" size=3>查询线宽范围</font></br>
+```
+	float[] lineWidthRange = new float[2];
+    GLES30.glGetFloatv(GLES30.GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange, 0);
+    Log.i(TAG, "min = " + lineWidthRange[0] + ", max = " + lineWidthRange[1]);
+```
+
 <font color="#0099ff" face="黑体" size=4>3. Points sprites</font></br>
+*<font color="#0044ff" face="黑体" size=3>指定点的大小</font></br>
+**in shader
+gl_PointSize = 2.0f;
+**in program
+```
+	float[] pointSizeRange = new float[2];
+    GLES30.glGetFloatv(GLES30.GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange, 0);
+    Log.i(TAG, "min = " + pointSizeRange[0] + ", max = " + pointSizeRange[1]);
+```
+
+*<font color="#ff000" face="黑体" size=3>Note:</font>*Window的坐标原点(0,0)在(Left, bottom), 而对于point sprites来说，坐标原点(0,0)在(left,top)。关于具体的OpenGL ES里面坐标系的问题请参考[坐标系详解]()。
+
+##Drawing Primitives
+<font color="#0099ff" size=4>1. Drawing commonds</font></br>
+*<font color="#ff0000" size=3> glDrawArrays(int mode,int first,int count);</font>
+
+mode:GL_POINTS,GL_LINES,GL_LINE_STRIP,GL_LINE_LOOP,GL_TRIANGLES,GL_TRIANGLE_STRIP,GL_TRIANGLE_FAN
+first: specifies the starting vertex index in the enabled vertex arrays.
+count: specifies the number of vertices to be drawn.</br>
+*<font color="#ff0000" size=3> glDrawElements(int mode,int first,int count);</font>
+
+<font color="#0099ff"  size=4>2. Triangles</font></br>
+<font color="#0099ff"  size=4>3. Triangles</font></br>
+<font color="#0099ff"  size=4>4. Triangles</font></br>
+##Primitives Assembly
