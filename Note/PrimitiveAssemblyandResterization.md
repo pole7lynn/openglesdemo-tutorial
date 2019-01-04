@@ -20,7 +20,7 @@ GLES30.glDrawArraysInstanced();
 GLES30.glDrawElementsInstanced();
 ```
 <font color="#0099ff" face="黑体" size=4>1. Triangles</font></br>
-(https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/Triangles.png)
+![Triangles](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/Triangles.png)
 
 <font color="#0099ff" face="黑体" size=4>2. Lines</font></br>
 <font color="#0099ff" face="黑体" size=4>3. Points sprites</font></br>
