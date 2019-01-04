@@ -1,7 +1,7 @@
 # The basic theroy of openGL ES.
 Study link: http://www.learnopengles.com/
 
-#绪
+# 绪
 这些笔记只是自己学习所得，有出错的地方请指正见谅。
 这些Demo只是用来测试用的，有不完整或者出错的地方请指正。
 
