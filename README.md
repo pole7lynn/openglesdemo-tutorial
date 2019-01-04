@@ -1,3 +1,4 @@
-# The basic theroy of openGL ES.(study link: http://www.learnopengles.com/)
+# The basic theroy of openGL ES.
+Study link: http://www.learnopengles.com/
 
-1.Triangle
+-1.OpenGL ES 3.0简介
