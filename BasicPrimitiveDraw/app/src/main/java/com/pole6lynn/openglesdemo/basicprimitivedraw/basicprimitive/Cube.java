@@ -5,6 +5,6 @@ import android.opengl.GLES30;
 public class Cube {
 
     public void draw() {
-        GLES30.glDrawArrays();
+        GLES30.glDrawElements();
     }
 }
