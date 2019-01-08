@@ -73,8 +73,79 @@ glDrawRangeElements(int mode,int start,int end,int count,int type,int offset);
 //start:specifies the minimum array index in indices
 //end:specifies the maximum array index in indices
 ```
-<font color="#0099ff"  size=4>2. Triangles</font></br>
-<font color="#0099ff"  size=4>3. Triangles</font></br>
-<font color="#0099ff"  size=4>4. Triangles</font></br>
+* <font color="#ff0000"  size=4>glDrawRangeElements()</font></br>
+```
+glDrawRangeElements(int mode, int start, int end, int count, int type, BUffer indices);
+glDrawRangeElements(int mode, int start, int end, int count, int type, int offest);
+//start: specifies the minimum array index in indices
+//end: specifies the maximum array index in indices
+```
+<font color="#0099ff" size=4>2. Primitive restart</font></br>
+<font color="#0099ff" size=4>3. Provoking vertex</font></br>
+<font color="#0099ff" size=4>4. Geometry instance</font></br>
 
 ## Primitives Assembly
+![Primitives Assembly](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/primitiveAssenblyStage.PNG)
+
+<font color="#0099ff" size=4>** Coordinate Systems</font></br>
+![Coordinate Systems](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/CoordinateSystems.PNG)
+
+<font color="#0099ff" size=4>1. Clipping</font></br>
+
+
+<font color="#0099ff" size=4>2. Perspective division</font></br>
+把经过裁剪的点进行转换成归一化的设备坐标。
+(Xc/W,Yc/w,Zc/w)
+
+<font color="#0099ff" size=4>3. Viewport transformation</font></br>
+```
+GLES30.glViewport(x,y,w,h);
+//(x,y)左下角
+```
+归一化设备坐标转换成屏幕坐标：
+xw = xd * w/2 + Ox;
+yw = yd * h/2 + Oy;
+zw = zd * (f-n)/2 + (f+n)/2;
+
+##Rasterization
+Rasterization pipline:</br>
+![Coordinate Systems](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Image/Rasterization.PNG)
+
+在片段着色器，可以通过很多的操作来控制图元的光栅化。</br>
+<font color="#0099ff" size=4>1. Culling(剔除操作)</font></br>
+剔除操作丢弃背对查看器的图元。
+```
+   private void enableCulling() {
+        GLES30.glEnable(GLES30.GL_CULL_FACE);
+        //mode:GL_BACK,GL_FRONT, GL_FRONT_AND_BACK
+        GLES30.glCullFace(GLES30.GL_BACK);
+        GLES30.glFrontFace(GLES30.GL_CW);//mode:GL_CW, GL_CCW
+    }
+    private void diasbleCulling() {
+        GLES30.glDisable(GLES30.GL_CULL_FACE);
+    }
+```
+
+<font color="#0099ff" size=4>2. Polygon offest</font></br>
+因为精度限制将会产生artifacts:Z-fighting artifacts.
+为了避免锯齿，在深度测试和深度值写入深度缓冲区之前需要添加一个delta去计算深度值。
+如果深度测试测过了，那么原来的深度值会被写入深度缓冲区。
+```
+private void polygonOffest() {
+        float polygonOffestFactor = -1.0f;
+        float polygonOffestUnits = -2.0f;
+        GLES30.glEnable(GLES30.GL_POLYGON_OFFSET_FILL);
+        GLES30.glPolygonOffset(polygonOffestFactor, polygonOffestUnits);
+    }
+```
+depth offest = m * factor + r * units;
+
+<font color="#0099ff" size=4>3. Occlusion Queries(遮挡查询)</font></br>
+```
+private void occlusionQuery() {
+        int[] ids = new int[1];
+        GLES30.glGenQueries(1, ids, 0);
+        GLES30.glBeginQuery(GLES30.GL_ANY_SAMPLES_PASSED, ids[0]);
+        GLES30.glEndQuery(GLES30.GL_ANY_SAMPLES_PASSED);
+    }
+```
