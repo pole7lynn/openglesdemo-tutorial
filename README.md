@@ -7,4 +7,4 @@ Study link: http://www.learnopengles.com/
 这些Demo只是用来测试用的，有不完整或者出错的地方请指正。
 
 - 第 1 章: [OpenGL ES 3.0简介](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Introduction.md)
-- 第 7 章: [图元装配和光栅化](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/Primitive%20Assembly%20and%20Resterization.md)
+- 第 7 章: [图元装配和光栅化](https://github.com/pole7lynn/openglesdemo-tutorial/blob/master/Note/PrimitiveAssemblyandResterization.md)
